@@ -107,41 +107,37 @@
 
   function setupMobileCtaVisibility() {
     const cta = document.getElementById("floating-cta");
+    const hero = document.querySelector(".hero");
     const footer = document.querySelector(".site-footer");
 
-    if (!cta || !footer) return;
+    if (!cta || !hero || !footer) return;
 
     const isMobile = () => window.innerWidth <= 820;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!isMobile()) {
-            cta.classList.remove("is-visible");
-            return;
-          }
-
-          if (entry.isIntersecting) {
-            cta.classList.remove("is-visible");
-          } else {
-            cta.classList.add("is-visible");
-          }
-        });
-      },
-      {
-        root: null,
-        threshold: 0,
-        rootMargin: "0px 0px -120px 0px",
-      },
-    );
-
-    observer.observe(footer);
-
-    window.addEventListener("resize", () => {
+    const updateCtaVisibility = () => {
       if (!isMobile()) {
         cta.classList.remove("is-visible");
+        return;
       }
-    });
+
+      const heroBottom = hero.getBoundingClientRect().bottom;
+      const footerTop = footer.getBoundingClientRect().top;
+      const viewportHeight = window.innerHeight;
+
+      const pastHero = heroBottom < 120;
+      const nearFooter = footerTop < viewportHeight - 120;
+
+      if (pastHero && !nearFooter) {
+        cta.classList.add("is-visible");
+      } else {
+        cta.classList.remove("is-visible");
+      }
+    };
+
+    updateCtaVisibility();
+
+    window.addEventListener("scroll", updateCtaVisibility, { passive: true });
+    window.addEventListener("resize", updateCtaVisibility);
   }
 
   function setupRevealAnimations() {
