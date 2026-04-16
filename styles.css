@@ -1326,3 +1326,9 @@ body.menu-open {
     transform: none;
   }
 }
+
+@media (max-width: 820px) {
+  .hero-meta {
+    display: none;
+  }
+}
