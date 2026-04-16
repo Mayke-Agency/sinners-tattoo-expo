@@ -106,13 +106,30 @@
   }
 
   function setupMobileCtaVisibility() {
-    if (!selectors.floatingCta || !selectors.hero) return;
+    const cta = document.getElementById("floating-cta");
+    const footer = document.querySelector(".site-footer");
 
-    const viewportWidth = window.innerWidth;
-    const heroBottom = selectors.hero.getBoundingClientRect().bottom;
-    const shouldShow = viewportWidth <= 820 && heroBottom < 120;
+    if (!cta || !footer) return;
 
-    selectors.floatingCta.classList.toggle("is-visible", shouldShow);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Hide CTA when footer is visible
+            cta.classList.remove("is-visible");
+          } else {
+            // Show CTA otherwise
+            cta.classList.add("is-visible");
+          }
+        });
+      },
+      {
+        root: null,
+        threshold: 0.1,
+      },
+    );
+
+    observer.observe(footer);
   }
 
   function setupRevealAnimations() {
